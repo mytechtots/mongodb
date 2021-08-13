@@ -1,0 +1,34 @@
+// Chapter 5: Indexing and Aggregation Pipeline
+//Quiz 2: sort() and limit()
+
+// working but lots of noise
+use('sample_training');
+db.trips.find( {"birth year" : {"$ne": null} } , { "birth year" : 1}).sort({"birth year" : 1}).limit(10)
+
+//not working
+use ('sample_training');
+db.trips.find().sort({"birth year" : 1}).limit(1)
+
+// works without the _id
+use('sample_training');
+db.trips.find( {"birth year" : {"$ne": null} } , { "_id" : 0 , "birth year" : 1}).sort({"birth year" : 1 }).limit(50)
+
+// my correct answer, limit cannot be more than 100
+use('sample_training');
+db.trips.find( {"birth year" : {"$ne": "" } } , { "_id" : 0 , "birth year" : 1}).sort({"birth year" : -1 }).limit(1)
+
+//errror
+use('sample_training');
+db.trips.aggregate( {"$group" : { "_id" :"birth year" })
+
+// correct answer earlier
+use('sample_airbnb');
+db.listingsAndReviews.aggregate([ { "$group": { "_id": "$room_type" } }])
+
+//correct answer
+use('sample_training');
+db.trips.find({ "birth year": { "$ne":"" } },
+              { "birth year": 1 }).sort({ "birth year": -1 }).limit(1)
+
+use('sample_training');
+db.routes.find({ "src_airport": "MUC" }).pretty()

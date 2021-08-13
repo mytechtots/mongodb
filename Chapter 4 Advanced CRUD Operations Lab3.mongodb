@@ -1,0 +1,94 @@
+// MongoDB Playground
+// Use Ctrl+Space inside a snippet or a string literal to trigger completions.
+
+// correct curly braces
+use('sample_airbnb');
+db.listingsAndReviews.find( {"accommodates": {"$gt" : 6 } } )
+
+//okay
+use('sample_airbnb');
+db.listingsAndReviews.find( {"number_of_reviews": {"$eq" : 50 } } )
+
+// correct answer - note the [ brackets needed for the and operator to work]
+//Chapter 4: Advanced CRUD Operations
+// Lab1 : 
+use('sample_airbnb');
+db.listingsAndReviews.find( { "$and": 
+[ 
+  {"number_of_reviews": {"$eq" : 50 } },
+  {"accommodates": {"$gt" : 6 } }
+]
+})
+
+//Chapter 4: Advanced CRUD Operations
+// Lab2 : array operator
+// my correct answer
+use('sample_airbnb');
+db.listingsAndReviews.count( { "$and": 
+[ 
+  {"property_type": {"$eq" : "House" } },
+  {"amenities": {"$all" : ["Changing table"] } }
+]
+})
+
+//model answer
+db.listingsAndReviews.find({ "property_type": "House",
+                             "amenities": "Changing table" }).count()
+//atlas UI
+{"property_type": "House","amenities": "Changing table"}
+
+// returns blank cos 8 is not a string
+use('sample_airbnb');
+db.listingsAndReviews.find( {"accommodates" : "8"}  ).pretty();
+
+//my Incorrect answer when i try to see array
+use('sample_training');
+db.companies.count(
+  {
+    "offices" : {"$all": [ { "city" : "Seattle"} ]} 
+  }
+)
+//correct answer is 117:
+db.companies.find({ "offices": { "$elemMatch": { "city": "Seattle" } }
+                  }).count()
+//"offices" is an array that contains documents with the address information from each office. 
+//We use $elemMatch to return all documents in which an office array element contains the field city with the value Seattle.
+// i redo my answer replacing $all with $elematch
+use('sample_training');
+db.companies.count(
+  {
+    "offices" : {"$elemMatch":  { "city" : "Seattle"} } 
+  }
+) //117
+
+//Chapter 4: Advanced CRUD Operations
+//Quiz: Array Operators and Projection
+//option A
+use('sample_training');
+db.companies.find({ "funding_rounds" : { "$size" : 
+8 } } , {"name" : 1 })
+//option B --> correct answer
+use('sample_training');
+db.companies.find({ "funding_rounds" : { "$size" : 
+8 } } , {"name" : 1 , "_id":0}) 
+//option c
+use('sample_training');
+db.companies.find({ "funding_rounds" : { "$size" : 
+8 } } , {"name" : 0 , "_id":1})
+
+//Chapter 4: Advanced CRUD Operations
+//Lab 1: Querying Arrays and Sub-Documents
+use('sample_training');
+db.trips.find({ "start station location.coordinates.0": { "$lt": -74 }}).count()
+
+//my answer is 18279 without the .0 array location as in first lab
+use('sample_training');
+db.inspections.find({ "address.city": { "$eq": "NEW YORK" }}).count()
+
+//recap from previous lab
+use('sample_training');
+db.companies.find({ "$and": [
+                        { "$or": [ { "founded_year": 2004 },
+                                   { "founded_month": 10 } ] },
+                        { "$or": [ { "category_code": "web" },
+                                   { "category_code": "social" }]}]}).count()

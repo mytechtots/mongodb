@@ -1,0 +1,108 @@
+//Chapter 4: Advanced CRUD Operations
+//Lab 2: Logic Operators
+
+// The current database to use.
+use('sample_training');
+db.companies.count(
+	{"$and":
+		[
+		{"category_code": "web"},
+		{"founded_year": "2004"},
+		]
+	}
+)
+
+//working 1947
+use('sample_training');
+db.companies.count({"category_code": "web"},{"founded_year": "2004"},)
+
+// working 34
+use('sample_training');
+db.companies.count({"category_code": "social"},{"founded_year": "2004"})
+
+// working 34
+use('sample_training');
+db.companies.count({"category_code": "social"},{"founded_month": 10})
+
+// working 1947
+use('sample_training');
+db.companies.count({"category_code": "web"},{"founded_month": 10})
+
+//1947+34=1981 is wrongx1
+
+
+
+
+//result is 77 // note that founded year is integer!!
+use('sample_training');
+db.companies.count( { "$and" : [{"category_code": "web","founded_year": 2004}]})
+
+//result is 77 // note that founded year is integer!! same result with different semantics
+use('sample_training');
+db.companies.find({ "$and" : [{"category_code": "web","founded_year": 2004}]}).count()
+
+// 2285 with $or
+use('sample_training');
+db.companies.find({ "$or" : [{"founded_year": 2004}, {"category_code": "web"}, {"category_code": "social"}]}).count()
+
+//2206 with month oct/10
+use('sample_training');
+db.companies.find({ "$or" : [{"founded_month": 10}, {"category_code": "web"}, {"category_code": "social"}]}).count()
+
+//2206+2285=4491 is wrongx2
+
+// 81 Afer correcting for  astrophe "" is still wrongx3
+use('sample_training');
+db.companies.find({ "$and": [
+{ "$and": [
+{ "founded_year": 2004 },
+{ "$or": [{ "category_code": "social" }, { "category_code": "web" }, { "founded_month": 10 }] },
+{ "$or": [{ "category_code": "social" }, { "category_code": "web" }] }
+] }).count()
+
+// 149 correct answer
+//In this case, you have to use an explicit $and. There are two or statements, and to get all the companies that match the required specification both or statements have to be true at the same time.
+use('sample_training');
+db.companies.find({ "$and": [
+                        { "$or": [ { "founded_year": 2004 },
+                                   { "founded_month": 10 } ] },
+                        { "$or": [ { "category_code": "web" },
+                                   { "category_code": "social" }]}]}).count()
+
+// ch4 lab expr wrong because i presume the wrong node...
+use('sample_training');
+db.companies.find( 
+    { "expr" : { "$gt": [ "products": 
+      {       
+        "permalink": "facebook-platform"
+      }, "$twitter_username" ]} }
+        ).count();
+
+//Chapter 4: Advanced CRUD Operations correct answer 
+//Lab: $expr
+use('sample_training');
+db.companies.find({ "$expr": { "$eq": [ "$permalink", "$twitter_username"] }
+              }).count()
+
+
+
+f
+// all below give unexpected 
+use('sample_training');
+db.companies.find({ "$and" : { “founded_year”: 2004 }, [{"founded_month": 10}, {"category_code": "web"}, {"category_code": "social"}], [{"founded_month": 2004 }, {"category_code": "web"}, {"category_code": "social"}]}).count()
+
+// notice color difference for $or
+use('sample_training');
+db.companies.find({ “$or”: [{ “$and” :[{“founded_year” : 2004},{ “$or” :[ { “category_code”: “social” }, { “category_code”: “web” } ] } ]}, {"$and":[{“founded_month” : 10},{ “$or” :[ { “category_code”: “social” }, { “category_code”: “web” } ] } ]} ]}).count()
+
+use('sample_training');
+db.companies.find({ “$and”: 
+[
+{ “founded_year”: 2004 },
+{ “$or”: [{ “category_code”: “social” }, { “category_code”: “web” }, { “founded_month”: 10 }] },
+],
+ }).count()
+
+use('sample_training');
+ db.companies.find({“founded_year”:2004, category_code:“web”}).count()
+

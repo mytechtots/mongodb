@@ -1,0 +1,20 @@
+//Chapter 5: Indexing and Aggregation Pipeline
+//Lab: Aggregation Framework
+
+// The current database to use.
+use('sample_airbnb');
+db.listingsAndReviews.aggregate([ { "$project": { "address": 1, "_id": 0 }},
+                                  { "$group": { "_id": "$address.country" }}])
+
+
+use('sample_airbnb');
+db.listingsAndReviews.aggregate([ { "$project": { "room_type": 1, "_id": 0 }},
+                                  { "$group": { "_id": "$room_type" }}])
+
+use ('sample_training');
+db.companies.find( { "founded_year" : {"$ne" :null } }, 
+                { "name" :1 , "founded_year" :1}).sort({"founded_year":1}).limits(5)
+
+// correct answer
+use('sample_airbnb');
+db.listingsAndReviews.aggregate([ { "$group": { "_id": "$room_type" } }])
